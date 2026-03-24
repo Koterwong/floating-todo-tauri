@@ -1,0 +1,13 @@
+{
+  "title": "待办事项",
+  "placeholder": "添加新任务...",
+  "settingsTitle": "设置",
+  "language": "语言",
+  "color": "背景颜色和透明度",
+  "size": "窗口尺寸 (宽 x 高)",
+  "font": "字体大小",
+  "shortcut": "显示/隐藏快捷键",
+  "shortcutHint": "点击录制新快捷键",
+  "autostart": "开机自动启动",
+  "save": "保存设置"
+}

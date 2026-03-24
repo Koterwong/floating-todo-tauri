@@ -1,0 +1,13 @@
+{
+  "title": "Todo list",
+  "placeholder": "Add a new task...",
+  "settingsTitle": "Settings",
+  "language": "Language",
+  "color": "Background Color & Opacity",
+  "size": "Window Size (W x H)",
+  "font": "Font Size",
+  "shortcut": "Toggle Shortcut",
+  "shortcutHint": "Press keys to record new shortcut",
+  "autostart": "Auto-start on boot",
+  "save": "Save Settings"
+}
