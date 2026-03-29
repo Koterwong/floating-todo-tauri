@@ -66,6 +66,39 @@ async function saveSettings() {
 }
 
 /**
+ * 设置窗口监听器：用于实时记忆用户拖拽调整的窗口大小
+ */
+let resizeDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+async function setupWindowListeners() {
+  const appWindow = getCurrentWindow();
+  
+  // 监听窗口尺寸变化
+  await appWindow.onResized(async ({ payload: size }) => {
+    // 缩放倍率纠偏：
+    // Tauri v2 的 `onResized` 返回的是窗口的 PhysicalSize（物理像素）。
+    // 在 150% 或 200% 缩放的屏幕上，物理像素会比逻辑像素大。
+    // 如果直接保存物理像素，下次启动时 `setSize`（使用逻辑像素）会导致窗口越变越大。
+    // 因此这里必须除以 scaleFactor 转换为逻辑像素后再保存到 settings 中。
+    const scaleFactor = await appWindow.scaleFactor();
+    const logicalWidth = Math.round(size.width / scaleFactor);
+    const logicalHeight = Math.round(size.height / scaleFactor);
+
+    settings.value.windowWidth = logicalWidth;
+    settings.value.windowHeight = logicalHeight;
+    
+    // 防抖处理，避免频繁写入磁盘
+    if (resizeDebounceTimer) clearTimeout(resizeDebounceTimer);
+    resizeDebounceTimer = setTimeout(async () => {
+      if (store) {
+        await store.set('settings', settings.value);
+        await store.save();
+        console.log('[Settings] 窗口尺寸已自动保存(逻辑像素):', logicalWidth, 'x', logicalHeight);
+      }
+    }, 1000);
+  });
+}
+
+/**
  * 设置管理 composable
  */
 export function useSettings() {
@@ -73,6 +106,7 @@ export function useSettings() {
     settings,
     isSettingsOpen,
     initSettings,
+    setupWindowListeners,
     applySettings,
     saveSettings,
   };

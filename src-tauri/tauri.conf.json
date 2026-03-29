@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "floating-todo-tauri",
+  "productName": "每日待办",
   "version": "0.1.0",
   "identifier": "com.antigravity.floatingtodo",
   "build": {
@@ -13,14 +13,14 @@
     "windows": [
       {
         "title": "Floating Todo",
-        "width": 350,
-        "height": 450,
+        "width": 500,
+        "height": 700,
         "decorations": false,
         "transparent": true,
-        "alwaysOnTop": true,
-        "resizable": false,
-        "skipTaskbar": true,
-        "visible": false,
+        "alwaysOnTop": false,
+        "resizable": true,
+        "skipTaskbar": false,
+        "visible": true,
         "shadow": false
       }
     ],

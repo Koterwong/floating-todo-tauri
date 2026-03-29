@@ -3,6 +3,7 @@
  * - Tailwind CSS v4 入口
  * - 透明背景 + 窗口拖拽
  * - 滚动条美化
+ * - 动画定义
  */
 
 @import "tailwindcss";
@@ -23,6 +24,10 @@ html, body, #app {
 :root {
   --bg-color: rgba(25, 25, 35, 0.65);
   --base-font-size: 13px;
+  --accent-color: #9d4edd;
+  --high-priority: #ff4d6d;
+  --medium-priority: #ffb703;
+  --low-priority: #8ac926;
   border: none !important;
 }
 
@@ -55,15 +60,53 @@ input[type=number] {
 
 /* ===== 滚动条美化 ===== */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== 动画效果 ===== */
+.list-item-enter-active,
+.list-item-leave-active {
+  transition: all 0.4s cubic-bezier(0.3, 0.1, 0.3, 1.2);
+}
+
+.list-item-enter-from {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.list-item-leave-to {
+  opacity: 0;
+  transform: scale(0.8) translateY(20px);
+}
+
+/* 渐显渐隐 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 原生日期输入框基础美化 */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(1);
+  opacity: 0.6;
+}
+
+input[type="date"]:hover::-webkit-calendar-picker-indicator {
+  opacity: 1;
 }

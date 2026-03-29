@@ -1,17 +1,18 @@
 /**
- * useEdgeDocking - 边缘吸附管理
+ * useEdgeDocking - 边缘吸附与自动隐藏管理
  *
- * 核心原理：
- * 通过 Rust 后端的 `get_cursor_position` 命令获取全局光标坐标，
- * 以 100ms 间隔轮询判断光标是否在窗口扩展区域内。
- * 这种方案与原版 Electron 的 `screen.getCursorScreenPoint()` 一致，
- * 彻底绕过了 WebView 的 mouseenter/mouseleave 事件不可靠问题。
+ * 【核心原理】
+ * 1. 窗口位置记忆：通过监听窗口移动，判断是否靠近屏幕边缘。
+ * 2. 物理坐标轮询：由于 WebView 的 mouseenter/mouseleave 在窗口移出屏幕或被遮挡时不可靠，
+ *    我们通过调用 Rust 后端的 `get_cursor_position` 直接获取系统级的全局物理坐标。
+ * 3. 像素单位对齐：Tauri 的窗口操作（setPosition）使用物理像素，而 CSS 中使用逻辑像素。
+ *    本模块统一在物理像素层面进行碰撞检测和位置计算，以确保跨高分屏（DPI）的一致性。
  *
- * 状态机：
- * - 未吸附 → 窗口靠近屏幕边缘 → 吸附隐藏
- * - 吸附隐藏 → 光标进入感应区 → 呼出显示
- * - 呼出显示 → 光标离开扩展区 → 吸附隐藏
- * - 呼出显示 → 用户拖离边缘 → 取消吸附，恢复自由
+ * 【状态流转】
+ * - 未吸附 → 窗口拖至边缘 → 进入吸附态 (isDocked=true)，窗口收缩至只留 5px。
+ * - 吸附态下 → 鼠标进入边缘感应区 → 呼出窗口 (isRevealed=true)。
+ * - 呼出态下 → 鼠标离开窗口扩展区 → 重新收缩。
+ * - 呼出态下 → 拖拽窗口远离边缘 → 彻底脱离吸附 (isDocked=false)。
  */
 import { ref, onUnmounted } from 'vue';
 import { getCurrentWindow, PhysicalPosition, currentMonitor } from '@tauri-apps/api/window';
@@ -31,9 +32,9 @@ let pollInterval: ReturnType<typeof setInterval> | null = null;
 /** 吸附后保留的像素感应宽度（物理像素） */
 const HANDLE_SIZE = 5;
 /** 轮询扩展的感应边距（光标在窗口外多远仍视为悬停） */
-const HOVER_MARGIN = 15;
+const HOVER_MARGIN = 10;
 /** 靠近边缘多少像素触发吸附 */
-const DOCK_THRESHOLD = 15;
+const DOCK_THRESHOLD = 10;
 /** 拖离边缘多少像素取消吸附 */
 const UNDOCK_THRESHOLD = 30;
 

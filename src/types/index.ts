@@ -3,10 +3,17 @@
  * 所有模块共享的接口和类型
  */
 
+/** 待办事项优先级 */
+export type Priority = 'high' | 'medium' | 'low';
+
 /** 待办事项 */
 export interface Todo {
+  id: string;
   text: string;
   completed: boolean;
+  dueDate: string | null;
+  priority: Priority;
+  createdAt: string;
 }
 
 /** 应用设置 */
@@ -37,6 +44,23 @@ export interface Translations {
   shortcutHint: string;
   autostart: string;
   save: string;
+  pinWindow: string;
+  unpinWindow: string;
+  // 新增增强功能的翻译
+  priorityHigh: string;
+  priorityMedium: string;
+  priorityLow: string;
+  filterAll: string;
+  filterToday: string;
+  filterUpcoming: string;
+  filterExpired: string;
+  filterCompleted: string;
+  noTasks: string;
+  dueDateLabel: string;
+  overdue: string;
+  confirmDelete: string;
+  delete: string;
+  cancel: string;
 }
 
 /** 默认设置 */
@@ -46,7 +70,7 @@ export const DEFAULT_SETTINGS: Settings = {
   autoStart: false,
   bgColor: '#191923',
   opacity: 65,
-  windowWidth: 350,
+  windowWidth: 400,
   windowHeight: 500,
   fontSize: 15,
 };

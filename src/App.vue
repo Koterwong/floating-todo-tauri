@@ -6,7 +6,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { Store } from '@tauri-apps/plugin-store';
-import { getCurrentWindow } from '@tauri-apps/api/window';
 
 // Composables
 import { useI18n } from './composables/useI18n';
@@ -23,7 +22,7 @@ import SettingsPanel from './components/SettingsPanel.vue';
 
 const { switchLanguage } = useI18n();
 const { initTodos } = useTodos();
-const { settings, initSettings } = useSettings();
+const { settings, initSettings, setupWindowListeners } = useSettings();
 const { setupShortcut } = useShortcut();
 const { isDocked, dockedEdge, isRevealed, setupEdgeDocking } = useEdgeDocking();
 
@@ -45,12 +44,10 @@ onMounted(async () => {
   switchLanguage(settings.value.language);
   // 注册全局快捷键
   await setupShortcut(settings.value.shortcut);
+  // 启动尺寸记忆
+  await setupWindowListeners();
   // 启动边缘吸附
   setupEdgeDocking();
-
-  // 所有初始化完成后再显示窗口，消除启动白闪
-  const appWindow = getCurrentWindow();
-  await appWindow.show();
 });
 </script>
 
@@ -83,7 +80,7 @@ onMounted(async () => {
       吸附指示条：窗口吸附隐藏后，在屏幕边缘显示一条发光的紫色指示条，
       让用户知道窗口在哪里，以及可以通过鼠标悬停呼出。
     -->
-    <div
+    <!-- <div
       v-if="isDocked && !isRevealed"
       class="fixed z-[200] pointer-events-none"
       :class="{
@@ -93,6 +90,6 @@ onMounted(async () => {
       }"
     >
       <div class="w-full h-full rounded-full bg-[#9d4edd] shadow-[0_0_12px_#9d4edd,0_0_4px_#c77dff] animate-pulse"></div>
-    </div>
+    </div> -->
   </div>
 </template>
