@@ -24,7 +24,8 @@ const { switchLanguage } = useI18n();
 const { initTodos } = useTodos();
 const { settings, initSettings, setupWindowListeners } = useSettings();
 const { setupShortcut } = useShortcut();
-const { isDocked, dockedEdge, isRevealed, setupEdgeDocking } = useEdgeDocking();
+const { setupEdgeDocking } = useEdgeDocking();
+// const { isDocked, dockedEdge, isRevealed } = useEdgeDocking(); // 暂时未使用，等还原指示条时再开启
 
 /**
  * 应用初始化
